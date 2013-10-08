@@ -31,6 +31,13 @@ QCav::usage="QCav[rayMat]; Calculates the stable q parameter in a cavity describ
 QReverse::usage="QReverse[q]; Reverses the direction of the q parameter by switching the sign of the real part.";
 
 
+Ray4M::usage="Ray4M[r,\[Epsilon],\[Epsilon]p];  The 4x4 misaligned ray matrix for a curved mirror of racius r and misalignments \[Epsilon] and \[Epsilon]p (position and angle).  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
+Ray4T::usage="Ray4T[d]; The 4.4 misaligned ray matrix for translation through free space over a distance d.  .  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
+Ray4IC::usage="Ray4IC[ni,nf,r,\[Epsilon],\[Epsilon]p]; The 4x4 misaligned ray matrix for translation through a curved interface of radius r, initial index of refraction ni, final index of refraction nf, and misalignments \[Epsilon] and \[Epsilon]p (position and angle).  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
+Ray4IF::usage="Ray4IF[ni,nf,\[Epsilon],\[Epsilon]p]; The 4x4 misaligned ray matrix for translation through a flat interface with initial index of refraction ni, final index of refraction nf, and misalignments \[Epsilon] and \[Epsilon]p (position and angle).  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
+Ray4L::usage="Ray4L[f,\[Epsilon],\[Epsilon]p];  The 4x4 misaligned ray matrix for translation through a thin lens of focal length f, and misalignments \[Epsilon] and \[Epsilon]p (position and angle).  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
+
+
 Begin["`Private`"]
 
 
@@ -60,6 +67,13 @@ QOvlpPow[q1_,q2_]:=Abs[QOvlpField[q1,q2]]^2;
 QProp[q_,{{a_,b_},{c_,d_}}]:=(a q+b)/(c q+d);
 QCav[{{a_,b_},{c_,d_}}]:=If[c<0,1/(2c)(a-d-Sqrt[(a-d)^2+4b c]),1/(2c)(a-d+Sqrt[(a-d)^2+4b c])]
 QReverse[q_]:=q-2*Re[q];
+
+
+Ray4M[r_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-2/r,1,-2/r \[Epsilon],-2\[Epsilon]p},{0,0,1,0},{0,0,0,1}};
+Ray4T[d_]={{1,d,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+Ray4IC[ni_,nf_,r_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-(1-ni/nf)/r,ni/nf,(1-ni/nf)/r \[Epsilon],(1-ni/nf)\[Epsilon]p},{0,0,1,0},{0,0,0,1}};
+Ray4IF[ni_,nf_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{0,ni/nf,0,(1-ni/nf)\[Epsilon]p},{0,0,1,0},{0,0,0,1}};
+Ray4L[f_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-1/f,1,1/f \[Epsilon],0},{0,0,1,0},{0,0,0,1}};
 
 
 End[]
