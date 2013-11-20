@@ -7,8 +7,10 @@ Beam\[Omega]::usage="Beam\[Omega][z]; Gives the beam size as a function of z.  T
 BeamR::usage="BeamR[z]; Gives the radius of curvature as a function of z.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
 Beam\[Eta]::usage="Beam\[Eta][z]; Gives the Gouy phase as a function of z relative to z=0.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
 BeamU::usage="BeamU[n,x,z]; Gives the 1D cross section of a laser field of mode order n.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
-BeamField::usage="BeamField[m,n,x,y,z]; Gives the full 2D laser field with unit power of mode order m,n.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
-BeamFieldProp::usage="BeamFieldProp[m,n,z2,z1]; The laser field propogator from location z1 to location z2.  Includes the propogation phase and the Gouy phase.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
+BeamHG::usage="BeamHG[m,n,x,y,z]; Gives the full 2D laser field with unit power of mode order m,n.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
+BeamHGProp::usage="BeamHGProp[m,n,z2,z1]; The laser field propogator from location z1 to location z2.  Includes the propogation phase and the Gouy phase.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
+BeamHGNum::usage="BeamHGNum[m,n]; A renumbering of the HG modes ({m,n}->j) for use with scattering matrix calculations."
+BeamHGNumInv::usage="BeamHGNumInv[j]; The inverse of the numbering defined by BeamHGNum (j->{m,n})"
 
 
 RayT::usage="RayT[d]; Gives the ray matrix for translation by a distance d.  It is assumed that the distance is already scaled by the index of refraction.  For propogation of a q parameter in a medium remember that it is the reduced distance, \!\(\*FractionBox[\(d\), \(n\)]\), which matters.";
@@ -45,8 +47,10 @@ Beam\[Omega][z_]:=Global`\[Omega]0 Sqrt[1+(z/Global`zr)^2];
 BeamR[z_]:=z(1+(Global`zr/z)^2);
 Beam\[Eta][z_]:=ArcTan[z/Global`zr];
 BeamU[n_,x_,z_]:=(2/Pi)^(1/4) (1/(2^n Factorial[n]Beam\[Omega][z]))^(1/2) HermiteH[n,Sqrt[2]x/Beam\[Omega][z]]Exp[-x^2(1/Beam\[Omega][z]^2+I(Pi/(Global`\[Lambda] BeamR[z])))];
-BeamField[m_,n_,x_,y_,z_]:=BeamU[m,x,z]BeamU[n,y,z];
-BeamFieldProp[m_,n_,z2_,z1_]:=Exp[-I 2Pi/Global`\[Lambda](z2-z1)]Exp[I(m+n+1)(Beam\[Eta][z2]-Beam\[Eta][z1])];
+BeamHG[m_,n_,x_,y_,z_]:=BeamU[m,x,z]BeamU[n,y,z];
+BeamHGProp[m_,n_,z2_,z1_]:=Exp[-I 2Pi/Global`\[Lambda](z2-z1)]Exp[I(m+n+1)(Beam\[Eta][z2]-Beam\[Eta][z1])];
+BeamHGNum[m_,n_]:=(n+m+1)/2(n+m)+m;
+BeamHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers];
 
 
 RayT[d_]:={{1,d},{0,1}};
