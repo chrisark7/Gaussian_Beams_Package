@@ -9,8 +9,6 @@ Beam\[Eta]::usage="Beam\[Eta][z]; Gives the Gouy phase as a function of z relati
 BeamU::usage="BeamU[n,x,z]; Gives the 1D cross section of a laser field of mode order n.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
 BeamHG::usage="BeamHG[m,n,x,y,z]; Gives the full 2D laser field with unit power of mode order m,n.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
 BeamHGProp::usage="BeamHGProp[m,n,z2,z1]; The laser field propogator from location z1 to location z2.  Includes the propogation phase and the Gouy phase.  The Beam_ functions use the waist size, \[Omega]0, the Rayleigh range, zr, and the wavelength, \[Lambda], as if they are already defined or will be replaced later.";
-BeamHGNum::usage="BeamHGNum[m,n]; A renumbering of the HG modes ({m,n}->j) for use with scattering matrix calculations."
-BeamHGNumInv::usage="BeamHGNumInv[j]; The inverse of the numbering defined by BeamHGNum (j->{m,n})"
 
 
 RayT::usage="RayT[d]; Gives the ray matrix for translation by a distance d.  It is assumed that the distance is already scaled by the index of refraction.  For propogation of a q parameter in a medium remember that it is the reduced distance, \!\(\*FractionBox[\(d\), \(n\)]\), which matters.";
@@ -40,6 +38,11 @@ Ray4IF::usage="Ray4IF[ni,nf,\[Epsilon],\[Epsilon]p]; The 4x4 misaligned ray matr
 Ray4L::usage="Ray4L[f,\[Epsilon],\[Epsilon]p];  The 4x4 misaligned ray matrix for translation through a thin lens of focal length f, and misalignments \[Epsilon] and \[Epsilon]p (position and angle).  Follows the prescription given by Wang Shaomin in 'Matrix Methods in Treating Decenterd Optical Systems.' Opt. Quant. Electron. 17;1;1-14.";
 
 
+ModeHGNum::usage="BeamHGNum[m,n]; A renumbering of the HG modes ({m,n}->j) for use with scattering matrix calculations."
+ModeHGNumInv::usage="BeamHGNumInv[j]; The inverse of the numbering defined by BeamHGNum (j->{m,n})"
+ModeHGProp::usage="ModeHGProp[modes,\[Eta]]; Gives the mode propogation matrix for the modes devined in the Nx2 matrix modes.  The output is simply a diagonal matrix with the jth diagonal entry given by Exp[-I*(1+modes[[j,1]]+modes[[j,2]])*\[Eta]]."
+
+
 Begin["`Private`"]
 
 
@@ -49,8 +52,6 @@ Beam\[Eta][z_]:=ArcTan[z/Global`zr];
 BeamU[n_,x_,z_]:=(2/Pi)^(1/4) (1/(2^n Factorial[n]Beam\[Omega][z]))^(1/2) HermiteH[n,Sqrt[2]x/Beam\[Omega][z]]Exp[-x^2(1/Beam\[Omega][z]^2+I(Pi/(Global`\[Lambda] BeamR[z])))];
 BeamHG[m_,n_,x_,y_,z_]:=BeamU[m,x,z]BeamU[n,y,z];
 BeamHGProp[m_,n_,z2_,z1_]:=Exp[-I 2Pi/Global`\[Lambda](z2-z1)]Exp[I(m+n+1)(Beam\[Eta][z2]-Beam\[Eta][z1])];
-BeamHGNum[m_,n_]:=(n+m+1)/2(n+m)+m;
-BeamHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers][[1]];
 
 
 RayT[d_]:={{1,d},{0,1}};
@@ -78,6 +79,11 @@ Ray4T[d_]={{1,d,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 Ray4IC[ni_,nf_,r_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-(1-ni/nf)/r,ni/nf,(1-ni/nf)/r \[Epsilon],(1-ni/nf)\[Epsilon]p},{0,0,1,0},{0,0,0,1}};
 Ray4IF[ni_,nf_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{0,ni/nf,0,(1-ni/nf)\[Epsilon]p},{0,0,1,0},{0,0,0,1}};
 Ray4L[f_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-1/f,1,1/f \[Epsilon],0},{0,0,1,0},{0,0,0,1}};
+
+
+ModeHGNum[m_,n_]:=(n+m+1)/2(n+m)+m;
+ModeHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers][[1]];
+ModeHGProp[modes_,\[Eta]_]:=Table[Piecewise[{{Exp[-I(modes[[jj,1]]+modes[[jj,2]]+1)\[Eta]],ii==jj}},0],{jj,1,Length[modes]},{ii,1,Length[modes]}];
 
 
 End[]
