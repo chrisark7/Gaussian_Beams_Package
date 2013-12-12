@@ -50,7 +50,7 @@ BeamU[n_,x_,z_]:=(2/Pi)^(1/4) (1/(2^n Factorial[n]Beam\[Omega][z]))^(1/2) Hermit
 BeamHG[m_,n_,x_,y_,z_]:=BeamU[m,x,z]BeamU[n,y,z];
 BeamHGProp[m_,n_,z2_,z1_]:=Exp[-I 2Pi/Global`\[Lambda](z2-z1)]Exp[I(m+n+1)(Beam\[Eta][z2]-Beam\[Eta][z1])];
 BeamHGNum[m_,n_]:=(n+m+1)/2(n+m)+m;
-BeamHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers];
+BeamHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers][[1]];
 
 
 RayT[d_]:={{1,d},{0,1}};
