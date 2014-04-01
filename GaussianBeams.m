@@ -41,6 +41,7 @@ Ray4L::usage="Ray4L[f,\[Epsilon],\[Epsilon]p];  The 4x4 misaligned ray matrix fo
 ModeHGNum::usage="BeamHGNum[m,n]; A renumbering of the HG modes ({m,n}->j) for use with scattering matrix calculations."
 ModeHGNumInv::usage="BeamHGNumInv[j]; The inverse of the numbering defined by BeamHGNum (j->{m,n})"
 ModeHGProp::usage="ModeHGProp[modes,\[Eta],kl]; Gives the mode propogation matrix for the modes devined in the Nx2 matrix modes.  The output is simply a diagonal matrix with the jth diagonal entry given by Exp[-I*(1+modes[[j,1]]+modes[[j,2]])*\[Eta]]*Exp[-I*kl]."
+ModeHGRefl::usage="ModeHGRefl[modes]; Gives the reflection matrix for an HG mode vector, -1 if the first mode index is even and +1 if it is positive."
 
 
 Begin["`Private`"]
@@ -84,6 +85,7 @@ Ray4L[f_,\[Epsilon]_,\[Epsilon]p_]={{1,0,0,0},{-1/f,1,1/f \[Epsilon],0},{0,0,1,0
 ModeHGNum[m_,n_]:=(n+m+1)/2(n+m)+m;
 ModeHGNumInv[j_]:={m,n}/.Solve[{(n+m+1)/2(n+m)+m==j,m>=0,n>=0},{m,n},Integers][[1]];
 ModeHGProp[modes_,\[Eta]_,kl_]:=Table[Piecewise[{{Exp[-I(modes[[jj,1]]+modes[[jj,2]]+1)\[Eta]]*Exp[-I*kl],ii==jj}},0],{jj,1,Length[modes]},{ii,1,Length[modes]}];
+ModeHGRefl[modes_]:=Table[Piecewise[{{-1+2Mod[modes[[ii,1]],2],ii==jj}},0],{jj,1,Length[modes]},{ii,1,Length[modes]}];
 
 
 End[]
