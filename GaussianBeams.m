@@ -28,6 +28,7 @@ QOvlpField::usage="QOvlpField[q1,q2]; Gives the complex value of the overlap int
 QOvlpPow::usage="QOvlpPow[q1,q2]; Gives the real value of the square of the overlap integral between two Gaussian beams fo unit power described by the beam parameters q1 and q2.";
 QProp::usage="QProp[q,rayMat]; Propogates the q parameter through the optical system described by the ABCD matrix rayMat.";
 QCav::usage="QCav[rayMat]; Calculates the stable q parameter in a cavity described by the round trip ray matrix rayMat.";
+QCav\[Eta]::usage="QCav\[Eta][rayMat]; Calculates the round trip Gouy phase in an optical cavity described by the round trip ray matrix rayMat.";
 QReverse::usage="QReverse[q]; Reverses the direction of the q parameter by switching the sign of the real part.";
 
 
@@ -71,7 +72,8 @@ Q\[Theta][q_]:=Global`\[Lambda]/(Q\[Omega]0[q] Pi);
 QOvlpField[q1_,q2_]:=(4 Im[q1]Im[q2])/Abs[Conjugate[q1]-q2]^2;
 QOvlpPow[q1_,q2_]:=Abs[QOvlpField[q1,q2]]^2;
 QProp[q_,{{a_,b_},{c_,d_}}]:=(a q+b)/(c q+d);
-QCav[{{a_,b_},{c_,d_}}]:=If[c<0,1/(2c)(a-d-Sqrt[(a-d)^2+4b c]),1/(2c)(a-d+Sqrt[(a-d)^2+4b c])]
+QCav[{{a_,b_},{c_,d_}}]:=If[c<0,1/(2c)(a-d-Sqrt[(a-d)^2+4b c]),1/(2c)(a-d+Sqrt[(a-d)^2+4b c])];
+QCav\[Eta][{{a_,b_},{c_,d_}}]:=2 ArcCos[Sign[b]Sqrt[(a+d+2)/4]];
 QReverse[q_]:=q-2*Re[q];
 
 
